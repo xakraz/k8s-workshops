@@ -8,8 +8,9 @@
 - [1 - Requirements](#1---requirements)
 - [2 - Bootstrap](#2---bootstrap)
   - [2.1 - Get the sources](#21---get-the-sources)
+  - [2.2 - Init the requirements](#22---init-the-requirements)
     - [Optional](#optional)
-  - [2.2 - Configure kubectl](#22---configure-kubectl)
+  - [2.3 - Configure kubectl](#23---configure-kubectl)
 - [3 - Get around Kube](#3---get-around-kube)
   - [3.1 - Nodes](#31---nodes)
   - [3.2 - Namespaces](#32---namespaces)
@@ -86,15 +87,24 @@ OR
 
 Clone the repo:
 ```
-git clone https://github.schibsted.io/xavier-krantz/k8s-workshops && cd k8s-workshops/1
+git clone https://github.schibsted.io/xavier-krantz/k8s-workshops
+cd k8s-workshops/1
 ```
+
+
+
+### 2.2 - Init the requirements
 
 Get `Kubectl`:
 ```
 ./scripts/get_kubectl.sh
 ```
 
--> Follow the instructions
+
+Init the Shell:
+```
+eval "$(../env.sh)"
+```
 
 
 #### Optional
@@ -110,12 +120,24 @@ For the sake of this workshop, we will use [**Kubernetes-Dind**](https://github.
 
 
 
-### 2.2 - Configure kubectl
+### 2.3 - Configure kubectl
 
+Doc:
+- https://lukemarsden.github.io/docs/user-guide/kubectl/kubectl_config/
+
+Keywords:
+* Cluster
+* User
+* Context = Cluster + User
+
+
+See the "Aggregated" config
 ```
 kubectl config view
 ```
 
+
+Define a "Context" for this session:
 ```
 kubectl config use-context dind
 ```

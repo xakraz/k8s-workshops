@@ -198,7 +198,9 @@ kubectl create -f app/database/mysql-pvc.yaml
 We will store a "password" as a *Secret object* in kube and will see hot to use it in a deployment
 
 ```
-kubectl create secret generic mysql-passwords --from-literal=root=myRootS3cr3t --from-literal=ghost=myS3cr3t
+kubectl create secret generic mysql-passwords \
+  --from-literal=root=myRootS3cr3t \
+  --from-literal=ghost=myS3cr3t
 ```
 
 ```

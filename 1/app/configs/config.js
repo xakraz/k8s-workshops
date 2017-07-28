@@ -8,7 +8,7 @@ config = {
     database: {
       client: 'mysql',
       connection: {
-        host: 'mysql.NAMESPACE.svc.cluster.local',
+        host: 'mysql.foo.svc.cluster.local',
         user: 'ghost',
         password: 'myp4ss',
         database: 'ghost',

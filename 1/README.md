@@ -42,6 +42,7 @@
   - [4.5 - Rolling Update](#45---rolling-update)
     - [Update](#update)
     - [Rollback](#rollback)
+- [5 - References](#5---references)
 
 <!-- /MarkdownTOC -->
 
@@ -316,7 +317,7 @@ kubectl get svc ghost -w
 Edit the `app/configs/config.js`
 
 ```
-sed -i "s/NAMESPACE/${NAMESPACE}/g" app/configs/config.js
+sed -i "s/foo/${NAMESPACE}/g" app/configs/config.js
 ```
 
 ```
@@ -468,9 +469,27 @@ kubectl rollout undo deployment/ghost
 >
 > Revision concept: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 >
-> `kubectl deploy ... --record`
-> `kubectl rollout history deployment/DEPLOY_NAME`
-> `kubectl rollout history deployment/DEPLOY_NAME --revision=2`
-> `kubectl rollout undo deployment/DEPLOY_NAME --to-revision=2`
+> - `kubectl deploy ... --record`
+> - `kubectl rollout history deployment DEPLOY_NAME`
+> - `kubectl rollout history deployment DEPLOY_NAME --revision=2`
+> - `kubectl rollout undo deployment DEPLOY_NAME --to-revision=2`
 >
+
+
+
+
+## 5 - References
+
+Leaning material
+- https://kubernetesbootcamp.github.io/kubernetes-bootcamp/
+- http://kubernetesbyexample.com/
+
+Presentations
+- https://speakerdeck.com/superbrothers/an-introduction-to-kubernetes
+- https://www.slideshare.net/resouer/kubernetes-walk-through-zhanglei
+- https://speakerdeck.com/thesandlord/kubernetes-best-practices
+
+Doc:
+- https://kubernetes.io/docs/home/
+
 

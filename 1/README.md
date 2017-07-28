@@ -28,6 +28,20 @@
     - [Sercret](#sercret)
     - [ConfigMap](#configmap)
     - [Deployment](#deployment)
+  - [4.3 - TroubleShoot](#43---troubleshoot)
+    - [Get Pods](#get-pods)
+    - [Logs](#logs)
+    - [Describe](#describe)
+    - [Exec and Jump into a Pod](#exec-and-jump-into-a-pod)
+    - [Resources ?](#resources-)
+  - [4.4 - Scale](#44---scale)
+    - [Manually](#manually)
+    - [Via Manifests](#via-manifests)
+    - [Online](#online)
+    - [AutoScale](#autoscale)
+  - [4.5 - Rolling Update](#45---rolling-update)
+    - [Update](#update)
+    - [Rollback](#rollback)
 
 <!-- /MarkdownTOC -->
 
@@ -332,4 +346,129 @@ kubectl create -f app/ghost/ghost-deployment.yaml
 
 
 
+
+
+### 4.3 - TroubleShoot
+
+#### Get Pods
+
+```
+kubectl get pods -w
+```
+
+
+
+#### Logs
+
+```
+kubectl logs ghost-651739629-00h4j -c nginx --tail=5 -f
+```
+
+
+
+#### Describe
+
+```
+kubectl describe deploy ghost
+```
+
+
+
+#### Exec and Jump into a Pod
+
+```
+kubectl exec -ti ghost-651739629-00h4j -- /bin/bash
+```
+
+
+
+#### Resources ?
+
+```
+kubectl top pod -l app=ghost
+```
+
+
+
+
+### 4.4 - Scale
+
+#### Manually
+
+```
+kubectl scale deploy ghost --replicas=3
+```
+
+
+
+#### Via Manifests
+
+Edit:
+* `app/ghost/ghost-deployment.yaml`
+* Change the `replicas` value
+
+Apply changes
+```
+kubectl apply -f app/ghost/ghost-deployment.yaml
+```
+
+
+
+#### Online
+
+```
+kubectl edit deploy ghost
+```
+
+
+
+#### AutoScale
+
+```
+kubectl autoscale ghost --min=2 --max=5 --cpu-percent=80
+```
+
+
+> Notes
+> --
+>
+> `kubectl get events -w`
+>
+
+
+
+
+### 4.5 - Rolling Update
+
+#### Update
+
+```
+kubectl set image deployment/ghost ghost=kelseyhightower/ghost:0.7.8
+```
+
+```
+kubectl get rs -w
+kubectl get rs -l app=ghost -w
+```
+
+
+
+#### Rollback
+
+```
+kubectl rollout undo deployment/ghost
+```
+
+
+
+> Notes
+> --
+>
+> Revision concept: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+>
+> `kubectl deploy ... --record`
+> `kubectl rollout history deployment/DEPLOY_NAME`
+> `kubectl rollout history deployment/DEPLOY_NAME --revision=2`
+> `kubectl rollout undo deployment/DEPLOY_NAME --to-revision=2`
+>
 

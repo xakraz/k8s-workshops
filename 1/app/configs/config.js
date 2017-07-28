@@ -4,7 +4,7 @@ var config;
 
 config = {
   production: {
-    url: 'http://LOADBALANCER_IP',
+    url: 'http://127.0.0.1:NODEPORT',
     database: {
       client: 'mysql',
       connection: {

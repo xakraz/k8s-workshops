@@ -11,7 +11,7 @@ spec:
       labels:
         name: mysql
     spec:
-      containers: 
+      containers:
         - image: mysql:5.6
           imagePullPolicy: "IfNotPresent"
           name: mysql
@@ -49,5 +49,5 @@ spec:
                 - "ping"
       volumes:
         - name: mysql-data
-          persistentVolumeClaim:
-            claimName: mysql-persistent-disk
+          hostPath:
+            path: /tmp/k8s-ws-data/mysql

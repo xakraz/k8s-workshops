@@ -16,9 +16,11 @@
     - [Create Namespace](#create-namespace)
     - [Get Namespaces](#get-namespaces)
     - [Configure your context to use your namespace](#configure-your-context-to-use-your-namespace)
-- [4 - Setup the App](#4---setup-the-app)
-  - [4.1 - Volume](#41---volume)
-  - [4.2 - Secrets](#42---secrets)
+- [4 - Workshop](#4---workshop)
+  - [4.1 - Base de donnees](#41---base-de-donnees)
+    - [Create a Volume](#create-a-volume)
+    - [Create a Secrets](#create-a-secrets)
+    - [Deploy the DB instance](#deploy-the-db-instance)
 
 <!-- /MarkdownTOC -->
 
@@ -99,6 +101,7 @@ kubectl config use-context dind
 
 
 
+
 ## 3 - Get around Kube
 
 ### 3.1 - Nodes
@@ -146,15 +149,12 @@ kubectl config set-context $(kubectl config current-context) --namespace=${NAMES
 
 
 
-## 4 - Setup the App
 
-### 4.1 - Volume
+## 4 - Workshop
 
-Create a persistant volume
+### 4.1 - Base de donnees
 
-```
-kubectl create -f app/database/mysql-pvc.yaml
-```
+#### Create a Volume
 
 > Warning
 > --
@@ -162,11 +162,17 @@ kubectl create -f app/database/mysql-pvc.yaml
 > Only these types of volumes are supported for now:
 > - https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes
 >
->
+
+
+For info if using GCloud: Create a persistant volume
+
+```
+kubectl create -f app/database/mysql-pvc.yaml
+```
 
 
 
-### 4.2 - Secrets
+#### Create a Secrets
 
 We will store a "password" as a *Secret object* in kube and will see hot to use it in a deployment
 
@@ -177,4 +183,26 @@ kubectl create secret generic mysql-passwords --from-literal=root=myRootS3cr3t -
 ```
 kubectl describe secret mysql-passwords
 ```
+
+
+
+#### Deploy the DB instance
+
+Deployment Manifest: `app/database/mysql-deployment.yaml`
+
+```
+kubectl apply -f app/database/mysql-deployment.yaml
+```
+
+
+Check:
+
+```
+kubectl get pods --all-namespaces -o wide -l name=mysql
+```
+
+```
+watch -n 2 'kubectl describe po mysql-'
+```
+
 

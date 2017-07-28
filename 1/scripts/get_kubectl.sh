@@ -35,9 +35,18 @@ pushd $PROJECT_DIR
   chmod +x ./kubectl
   mv -v kubectl ${PROJECT_DIR}/bin/
   echo ''
+  echo "===> $0: DONE"
 
-  echo '---> Configure your shell:'
+  echo ''
+  echo ''
+  echo ''
+  echo ''
+  echo '===> Configure your shell:'
   echo "* export PATH=${PROJECT_DIR}/bin:\${PATH}"
   echo "* source <(kubectl completion $(basename $SHELL))"
+  echo ''
+  echo ''
+  echo ''
+  echo ''
 popd
 

@@ -21,6 +21,10 @@
     - [Create a Volume](#create-a-volume)
     - [Create a Secrets](#create-a-secrets)
     - [Deploy the DB instance](#deploy-the-db-instance)
+    - [Service](#service)
+    - [Check your DB](#check-your-db)
+  - [4.2 - The Ghost App](#42---the-ghost-app)
+    - [Service](#service-1)
 
 <!-- /MarkdownTOC -->
 
@@ -188,15 +192,16 @@ kubectl describe secret mysql-passwords
 
 #### Deploy the DB instance
 
-Deployment Manifest: `app/database/mysql-deployment.yaml`
+Have a look at the deployment Manifest: `app/database/mysql-deployment.yaml`
 
+
+Deploy:
 ```
 kubectl apply -f app/database/mysql-deployment.yaml
 ```
 
 
 Check:
-
 ```
 kubectl get pods --all-namespaces -o wide -l name=mysql
 ```
@@ -205,4 +210,79 @@ kubectl get pods --all-namespaces -o wide -l name=mysql
 watch -n 2 'kubectl describe po mysql-'
 ```
 
+
+
+#### Service
+
+Create
+```
+kubectl create -f app/database/mysql-service.yaml
+```
+
+
+Check
+```
+kubectl get svc
+```
+
+
+Describe
+```
+kubectl describe svc
+```
+
+
+
+#### Check your DB
+
+Run an MySQL Client in the k8s cluster
+
+```
+kubectl run -ti mysqlcli --image mysql --command /bin/bash
+```
+
+
+Try the DB service
+```
+mysql -h mysql.foo.svc.cluster.local -u ghost -p
+```
+
+
+> Notes01:
+> --
+>
+> Rememeber the password in Secret section
+>
+
+
+> Note02:
+> --
+>
+> Notice the SERVICE discovery in k8s with DNS convention:
+>
+> * `<service_name>.<namespace>.svc.<cluster_domain_name>`
+>
+
+
+Connect to Running Pod:
+```
+kubectl exec -ti <pod-name> [--namespace <namespace>] [-c <container-name>] -- /bin/bash
+```
+
+
+Cleanup:
+```
+kubectl delete deploy mysqlcli
+```
+
+
+
+
+### 4.2 - The Ghost App
+
+#### Service
+
+```
+kubectl create -f app/ghost/ghost-service.yaml
+```
 

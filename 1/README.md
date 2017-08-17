@@ -18,21 +18,21 @@
     - [Get Namespaces](#get-namespaces)
     - [Configure your context to use your namespace](#configure-your-context-to-use-your-namespace)
 - [4 - Workshop](#4---workshop)
-  - [4.1 - Base de donnees](#41---base-de-donnees)
+  - [4.1 - Database](#41---database)
     - [Create a Volume](#create-a-volume)
     - [Create a Secrets](#create-a-secrets)
-    - [Deploy the DB instance](#deploy-the-db-instance)
-    - [Service](#service)
+    - [Create the Deployment](#create-the-deployment)
+    - [Create the Service](#create-the-service)
     - [Check your DB](#check-your-db)
   - [4.2 - The Ghost App](#42---the-ghost-app)
-    - [Service](#service-1)
+    - [Service](#service)
     - [Sercret](#sercret)
     - [ConfigMap](#configmap)
     - [Deployment](#deployment)
   - [4.3 - TroubleShoot](#43---troubleshoot)
     - [Get Pods](#get-pods)
-    - [Logs](#logs)
-    - [Describe](#describe)
+    - [Get Pod Logs](#get-pod-logs)
+    - [Describe the Deployment](#describe-the-deployment)
     - [Exec and Jump into a Pod](#exec-and-jump-into-a-pod)
     - [Resources ?](#resources-)
   - [4.4 - Scale](#44---scale)
@@ -173,7 +173,7 @@ export NAMESPACE=foo
 > Warning:
 > --
 >
-> Ne pas oublier d’initialiser la variable d'environnement NAMESPACE
+> Do NOT forget to initialize the environment variable `NAMESPACE` for the rest of the workshop !
 >
 
 
@@ -196,7 +196,7 @@ kubectl config set-context $(kubectl config current-context) --namespace=${NAMES
 
 ## 4 - Workshop
 
-### 4.1 - Base de donnees
+### 4.1 - Database
 
 #### Create a Volume
 
@@ -215,10 +215,17 @@ kubectl create -f app/database/mysql-pvc.yaml
 ```
 
 
+> Notes
+> --
+>
+> Since we are NOT using K8s cluster on a cloud provider, we will skip the PERSISTANT volume for now
+>
+
+
 
 #### Create a Secrets
 
-We will store a "password" as a *Secret object* in kube and will see hot to use it in a deployment
+We will store a "password" as a *Secret object* in kube and will see how to use it in a "deployment"
 
 ```
 kubectl create secret generic mysql-passwords \
@@ -232,7 +239,7 @@ kubectl describe secret mysql-passwords
 
 
 
-#### Deploy the DB instance
+#### Create the Deployment
 
 Have a look at the deployment Manifest: `app/database/mysql-deployment.yaml`
 
@@ -254,7 +261,7 @@ watch -n 2 'kubectl describe po mysql-'
 
 
 
-#### Service
+#### Create the Service
 
 Create
 ```
@@ -293,14 +300,14 @@ mysql -h mysql.foo.svc.cluster.local -u ghost -p
 > Notes01:
 > --
 >
-> Rememeber the password in Secret section
+> Rememeber the password in Secret section ;)
 >
 
 
 > Note02:
 > --
 >
-> Notice the SERVICE discovery in k8s with DNS convention:
+> Notice the `SERVICE` discovery in k8s with DNS convention:
 >
 > * `<service_name>.<namespace>.svc.<cluster_domain_name>`
 >
@@ -370,6 +377,15 @@ kubectl create -f app/ghost/ghost-deployment.yaml
 ```
 
 
+> Question:
+> --
+>
+> Does everything work ?
+>
+> => Answer is "nope", that would be too easy ^^
+>
+> Time for debugging:
+
 
 
 
@@ -383,7 +399,7 @@ kubectl get pods -w
 
 
 
-#### Logs
+#### Get Pod Logs
 
 ```
 kubectl logs ghost-651739629-00h4j -c nginx --tail=5 -f
@@ -391,7 +407,7 @@ kubectl logs ghost-651739629-00h4j -c nginx --tail=5 -f
 
 
 
-#### Describe
+#### Describe the Deployment
 
 ```
 kubectl describe deploy ghost

@@ -1,6 +1,12 @@
 # k8s workshop-1
 
 
+## Slides - Introduction
+
+[K8s - Concepts introduction](sre-workshop-k8s_1.pdf)
+
+
+
 ## Table Of Content
 
 <!-- MarkdownTOC -->
@@ -87,7 +93,7 @@ OR
 
 Clone the repo:
 ```
-git clone https://github.schibsted.io/xavier-krantz/k8s-workshops
+git clone https://github..com/xavier-krantz/k8s-workshops
 cd k8s-workshops/1
 ```
 

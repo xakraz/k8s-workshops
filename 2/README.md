@@ -36,6 +36,8 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Note01](#note01-4)
   - [Note02](#note02-3)
 - [6. Deploy Jenkins using Helm](#6-deploy-jenkins-using-helm)
+  - [Overview](#overview-3)
+  - [Note01](#note01-5)
 - [7. Deploy Apache Kafka using KUDO](#7-deploy-apache-kafka-using-kudo)
 - [8. Scale a Konvoy cluster](#8-scale-a-konvoy-cluster)
 - [9. Konvoy monitoring](#9-konvoy-monitoring)
@@ -477,6 +479,77 @@ dynamic   Bound     pvc-f4329fc9-68d3-4ab7-b3f2-a0aba91dfb41   1Gi        RWO   
 
 
 ## 6. Deploy Jenkins using Helm
+
+### Overview
+
+`Helm` = Package of kube resources
+
+
+### Note01
+
+Jenkins Helm package:
+* ConfigMap
+* Secret
+* Pvc
+* Role + RoleBinding
+* Deployment
+* Service
+* ServiceAccount
+
+
+```
+$ helm install stable/jenkins --name jenkins --version 1.5.0 --set master.adminPassword=password
+
+
+NAME:   jenkins
+LAST DEPLOYED: Thu Oct 10 12:22:22 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+
+RESOURCES:
+==> v1/ConfigMap
+NAME           DATA  AGE
+jenkins        5     0s
+jenkins-tests  1     0s
+
+==> v1/Deployment
+NAME     READY  UP-TO-DATE  AVAILABLE  AGE
+jenkins  0/1    1           0          0s
+
+==> v1/PersistentVolumeClaim
+NAME     STATUS   VOLUME                CAPACITY  ACCESS MODES  STORAGECLASS  AGE
+jenkins  Pending  awsebscsiprovisioner  0s
+
+==> v1/Pod(related)
+NAME                     READY  STATUS   RESTARTS  AGE
+jenkins-c79f457cb-6jxxb  0/1    Pending  0         0s
+
+==> v1/Role
+NAME                     AGE
+jenkins-schedule-agents  0s
+
+==> v1/RoleBinding
+NAME                     AGE
+jenkins-schedule-agents  0s
+
+==> v1/Secret
+NAME     TYPE    DATA  AGE
+jenkins  Opaque  2     1s
+
+==> v1/Service
+NAME           TYPE          CLUSTER-IP  EXTERNAL-IP  PORT(S)         AGE
+jenkins        LoadBalancer  10.0.50.35  <pending>    8080:30833/TCP  0s
+jenkins-agent  ClusterIP     10.0.38.18  <none>       50000/TCP       0s
+
+==> v1/ServiceAccount
+NAME     SECRETS  AGE
+jenkins  1        0s
+```
+
+
+
+
+
 ## 7. Deploy Apache Kafka using KUDO
 ## 8. Scale a Konvoy cluster
 ## 9. Konvoy monitoring

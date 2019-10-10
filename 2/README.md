@@ -19,6 +19,10 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Note04](#note04)
   - [Note05](#note05)
 - [2. Expose a Kubernetes Application using a Service Type Load Balancer (L4)](#2-expose-a-kubernetes-application-using-a-service-type-load-balancer-l4)
+  - [Note01](#note01-1)
+  - [Note02](#note02-1)
+  - [Note03](#note03-1)
+  - [Note04](#note04-1)
 - [3. Expose a Kubernetes Application using an Ingress (L7)](#3-expose-a-kubernetes-application-using-an-ingress-l7)
 - [4. Leverage Network Policies to restrict access](#4-leverage-network-policies-to-restrict-access)
 - [5. Leverage persistent storage using CSI](#5-leverage-persistent-storage-using-csi)
@@ -48,6 +52,7 @@ Junp server
 ```
 ssh centos@54.173.172.254
 ```
+
 
 
 
@@ -84,7 +89,6 @@ persisted to local or remote state storage.
 ```
 
 
-
 ### Note02
 
 `konvoy` internal steps:
@@ -99,7 +103,6 @@ persisted to local or remote state storage.
     PLAY [Bootstrap Nodes]
 6. STAGE [Deploying Container Networking] : `ansible`
 7. STAGE [Deploying Enabled Addons]
-
 
 
 ### Note03
@@ -134,7 +137,6 @@ dex-k8s-authenticator                                                  [OK]
 
 velero                                                                 [OK]
 ```
-
 
 
 ### Note04
@@ -231,6 +233,91 @@ ip-10-0-195-218.ec2.internal   Ready    master   20m   v1.15.2
 
 
 ## 2. Expose a Kubernetes Application using a Service Type Load Balancer (L4)
+
+
+File: [redis.yml](./lab/2/redis.yml)
+
+### Note01
+
+```
+kubectl apply -f lab/2/redis.yml
+```
+
+-> Pod
+-> Service
+
+
+### Note02
+
+Get output in Json
+
+
+```
+kubectl get svc redis --output json
+{
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+        "creationTimestamp": "2019-10-10T10:02:35Z",
+        "labels": {
+            "app": "redis"
+        },
+        "name": "redis",
+        "namespace": "default",
+        "resourceVersion": "9696",
+        "selfLink": "/api/v1/namespaces/default/services/redis",
+        "uid": "bc23762a-e1b1-4b69-a99b-83e5c0f0c72a"
+    },
+    "spec": {
+        "clusterIP": "10.0.14.139",
+        "externalTrafficPolicy": "Cluster",
+        "ports": [
+            {
+                "nodePort": 32013,
+                "port": 6379,
+                "protocol": "TCP",
+                "targetPort": 6379
+            }
+        ],
+        "selector": {
+            "app": "redis"
+        },
+        "sessionAffinity": "None",
+        "type": "LoadBalancer"
+    },
+    "status": {
+        "loadBalancer": {
+            "ingress": [
+                {
+                    "hostname": "abc23762ae1b14b69a99b83e5c0f0c72-761579066.us-east-1.elb.amazonaws.com"
+                }
+            ]
+        }
+    }
+}
+
+```
+
+
+### Note03
+
+Get specific property from Json output:
+
+```
+kubectl get svc redis --output jsonpath={.status.loadBalancer.ingress[*].hostname}
+
+abc23762ae1b14b69a99b83e5c0f0c72-761579066.us-east-1.elb.amazonaws.com
+```
+
+
+### Note04
+
+By default, the `type: LoadBalancer` is cloud provider specific (k8s used to have cloud providers drivers built-in ...)
+
+
+
+
+
 ## 3. Expose a Kubernetes Application using an Ingress (L7)
 ## 4. Leverage Network Policies to restrict access
 ## 5. Leverage persistent storage using CSI

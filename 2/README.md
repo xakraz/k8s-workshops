@@ -32,6 +32,9 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Overview](#overview-1)
   - [Note01](#note01-3)
 - [5. Leverage persistent storage using CSI](#5-leverage-persistent-storage-using-csi)
+  - [Overview](#overview-2)
+  - [Note01](#note01-4)
+  - [Note02](#note02-3)
 - [6. Deploy Jenkins using Helm](#6-deploy-jenkins-using-helm)
 - [7. Deploy Apache Kafka using KUDO](#7-deploy-apache-kafka-using-kudo)
 - [8. Scale a Konvoy cluster](#8-scale-a-konvoy-cluster)
@@ -409,7 +412,70 @@ Gateway Timeout
 
 
 
+
 ## 5. Leverage persistent storage using CSI
+
+### Overview
+
+1. [x] Create a `PersistentVolumeClaim` (pvc) to use the `AWS EBS` CSI driver
+2. [x] Create a service that will use this PVC and dynamically provision an EBS volume
+3. [x] Validate persistence
+
+
+### Note01
+
+Konvoy is deployed with `awsebscsiprvisioner`, which creates a `StorageClass`
+
+```
+$ kubectl get sc awsebscsiprovisioner -o yaml
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    kubernetes.io/description: AWS EBS CSI provisioner StorageClass
+    storageclass.kubernetes.io/is-default-class: "true"
+  creationTimestamp: "2019-10-10T09:21:16Z"
+  name: awsebscsiprovisioner
+  resourceVersion: "1666"
+  selfLink: /apis/storage.k8s.io/v1/storageclasses/awsebscsiprovisioner
+  uid: 2a6fdf13-3964-4caf-acf6-60c4e0a6ce7c
+parameters:
+  type: gp2
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+```
+
+
+### Note02
+
+>
+> As you can see, it is **waiting for a Pod** to use it to provision the AWS EBS volume.
+>
+
+```
+volumeBindingMode: WaitForFirstConsumer
+```
+
+
+Events history
+
+```
+$ kubectl get pvc -o wide -w
+
+NAME      STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS           AGE   VOLUMEMODE
+dynamic   Pending                                      awsebscsiprovisioner   16s   Filesystem
+dynamic   Pending                                      awsebscsiprovisioner   98s   Filesystem
+dynamic   Pending                                      awsebscsiprovisioner   98s   Filesystem
+dynamic   Pending   pvc-f4329fc9-68d3-4ab7-b3f2-a0aba91dfb41   0                         awsebscsiprovisioner   105s   Filesystem
+dynamic   Bound     pvc-f4329fc9-68d3-4ab7-b3f2-a0aba91dfb41   1Gi        RWO            awsebscsiprovisioner   105s   Filesystem
+```
+
+
+
+
+
 ## 6. Deploy Jenkins using Helm
 ## 7. Deploy Apache Kafka using KUDO
 ## 8. Scale a Konvoy cluster

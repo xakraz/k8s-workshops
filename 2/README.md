@@ -39,6 +39,11 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Overview](#overview-3)
   - [Note01](#note01-5)
 - [7. Deploy Apache Kafka using KUDO](#7-deploy-apache-kafka-using-kudo)
+  - [Overview](#overview-4)
+  - [Note01](#note01-6)
+  - [Note02](#note02-4)
+  - [Note03](#note03-3)
+  - [Note04](#note04-2)
 - [8. Scale a Konvoy cluster](#8-scale-a-konvoy-cluster)
 - [9. Konvoy monitoring](#9-konvoy-monitoring)
 - [10. Konvoy logging/debugging](#10-konvoy-loggingdebugging)
@@ -551,6 +556,91 @@ jenkins  1        0s
 
 
 ## 7. Deploy Apache Kafka using KUDO
+
+### Overview
+
+Kubernetes Universal Declarative Operator (KUDO).
+
+
+### Note01
+
+`Kudo` cli is available in a `kubectl` plugin (`/usr/local/bin/kubectl-kudo`)
+
+
+### Note02
+
+Install `kudo` in the cluster
+
+```
+$ kubectl kudo init
+```
+
+```
+$ kubectl get pods -n kudo-system
+
+NAME                        READY   STATUS    RESTARTS   AGE
+kudo-controller-manager-0   1/1     Running   0          2m34s
+```
+
+
+### Note03
+
+Internals:
+* KUDO is creating `CRDs`
+
+```
+$ kubectl get crds | grep kudo
+
+instances.kudo.dev                               2019-08-21T09:30:46Z
+operators.kudo.dev                               2019-08-21T09:30:45Z
+operatorversions.kudo.dev                        2019-08-21T09:30:45Z
+planexecutions.kudo.dev                          2019-08-21T09:30:46Z
+```
+
+```
+$ kubectl get instances.kudo.dev
+NAME    AGE
+kafka   5m55s
+zk      9m6s
+
+```
+
+
+### Note04
+
+Install Zookeeper, the operator way:
+
+```
+$ kubectl kudo install zookeeper --instance=zk
+instance.kudo.dev/v1alpha1/zk created
+```
+
+```
+$ kubectl kudo plan status --instance=zk
+Plan(s) for "zk" in namespace "default":
+.
+└── zk (Operator-Version: "zookeeper-0.1.0" Active-Plan: "deploy")
+    ├── Plan deploy (serial strategy) [IN_PROGRESS]
+    │   ├── Phase zookeeper [IN_PROGRESS]
+    │   │   └── Step everything (IN_PROGRESS)
+    │   └── Phase validation [PENDING]
+    │       └── Step validation (PENDING)
+    |
+    └── Plan validation (serial strategy) [NOT ACTIVE]
+        └── Phase connection (parallel strategy) [NOT ACTIVE]
+            └── Step connection (parallel strategy) [NOT ACTIVE]
+                └── connection [NOT ACTIVE]
+```
+
+```
+$ kubectl get pods | grep zk
+zk-zookeeper-0   1/1     Running   0          2m32s
+zk-zookeeper-1   1/1     Running   0          2m32s
+zk-zookeeper-2   1/1     Running   0          2m32s
+```
+
+
+
 ## 8. Scale a Konvoy cluster
 ## 9. Konvoy monitoring
 ## 10. Konvoy logging/debugging

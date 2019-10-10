@@ -29,6 +29,8 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Note02](#note02-2)
   - [Note03](#note03-2)
 - [4. Leverage Network Policies to restrict access](#4-leverage-network-policies-to-restrict-access)
+  - [Overview](#overview-1)
+  - [Note01](#note01-3)
 - [5. Leverage persistent storage using CSI](#5-leverage-persistent-storage-using-csi)
 - [6. Deploy Jenkins using Helm](#6-deploy-jenkins-using-helm)
 - [7. Deploy Apache Kafka using KUDO](#7-deploy-apache-kafka-using-kudo)
@@ -367,7 +369,46 @@ Traefik ScreenShot
 
 
 
+
+
 ## 4. Leverage Network Policies to restrict access
+
+### Overview
+
+By default, every services are reachable from anywhere (pods, namespaces, ...)
+
+When doing multitenant, need isolation
+
+Objectives
+1. [x] Create a network policy to deny any ingress
+2. [x] Check that the Redis and the http-echo apps aren't accessible anymore
+3. [x] Create network policies to allow ingress access to these apps only
+4. [x] Check that the Redis and the http-echo apps are now accessible
+
+=> Using `Calico`
+
+
+### Note01
+
+Steps:
+* Create default policy
+* Allow access to `http-echo-1` only
+* Validate
+
+
+```
+[centos@ip-172-31-35-79 lab]$ curl -k -H "Host: http-echo-1.com" https://$(kubectl get svc traefik-kubeaddons -n kubeaddons --output jsonpath={.status.loadBalancer.ingress[*].hostname})
+Hello from http-echo-1
+
+[centos@ip-172-31-35-79 lab]$ curl -k -H "Host: http-echo-2.com" https://$(kubectl get svc traefik-kubeaddons -n kubeaddons --output jsonpath={.status.loadBalancer.ingress[*].hostname})
+Gateway Timeout
+```
+
+=> Success
+
+
+
+
 ## 5. Leverage persistent storage using CSI
 ## 6. Deploy Jenkins using Helm
 ## 7. Deploy Apache Kafka using KUDO

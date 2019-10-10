@@ -24,6 +24,10 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Note03](#note03-1)
   - [Note04](#note04-1)
 - [3. Expose a Kubernetes Application using an Ingress (L7)](#3-expose-a-kubernetes-application-using-an-ingress-l7)
+  - [Overview](#overview)
+  - [Note01](#note01-2)
+  - [Note02](#note02-2)
+  - [Note03](#note03-2)
 - [4. Leverage Network Policies to restrict access](#4-leverage-network-policies-to-restrict-access)
 - [5. Leverage persistent storage using CSI](#5-leverage-persistent-storage-using-csi)
 - [6. Deploy Jenkins using Helm](#6-deploy-jenkins-using-helm)
@@ -319,6 +323,50 @@ By default, the `type: LoadBalancer` is cloud provider specific (k8s used to hav
 
 
 ## 3. Expose a Kubernetes Application using an Ingress (L7)
+
+### Overview
+
+* Create 2 pods
+* Create 2 services with `NodePort`
+    - The services should be reachable by hiting a node witht the specified port 
+* Publish via `Traefik` with L7
+
+
+Resources: [3](labs/3/)
+
+
+### Note01
+
+How `traefik` was deloyed as an `ingress` ?
+
+Because in the end:
+-> we get AWS ELB IP,
+-> which then redirect on `traefik`
+-> which route to the `pod` according to the ingress rules ...
+
+
+### Note02
+
+```
+$ kubectl get ingress -o wide
+
+NAME   HOSTS                             ADDRESS                                                                 PORTS   AGE
+echo   http-echo-1.com,http-echo-2.com   a2aae854f9cca4a23945922be797e718-54138659.us-east-1.elb.amazonaws.com   80      10s
+```
+
+
+```
+$ curl -k -H "Host: http-echo-1.com" https://$(kubectl get ingress echo --output jsonpath={.status.loadBalancer.ingress[*].hostname})
+Hello from http-echo-1
+```
+
+
+### Note03
+
+Traefik ScreenShot
+
+
+
 ## 4. Leverage Network Policies to restrict access
 ## 5. Leverage persistent storage using CSI
 ## 6. Deploy Jenkins using Helm

@@ -18,6 +18,7 @@ Workshop: https://github.com/mesosphere/konvoy-training
   - [Note03](#note03)
   - [Note04](#note04)
   - [Note05](#note05)
+  - [Note06](#note06)
 - [2. Expose a Kubernetes Application using a Service Type Load Balancer (L4)](#2-expose-a-kubernetes-application-using-a-service-type-load-balancer-l4)
   - [Note01](#note01-1)
   - [Note02](#note02-1)
@@ -48,9 +49,13 @@ Workshop: https://github.com/mesosphere/konvoy-training
 - [9. Konvoy monitoring](#9-konvoy-monitoring)
 - [10. Konvoy logging/debugging](#10-konvoy-loggingdebugging)
 - [11. Upgrade a Konvoy cluster](#11-upgrade-a-konvoy-cluster)
+  - [Overview](#overview-5)
 - [12. Destroy a Konvoy cluster](#12-destroy-a-konvoy-cluster)
 - [Appendix](#appendix)
   - [1. Setting up an external identity provider](#1-setting-up-an-external-identity-provider)
+  - [2. Service-mesh](#2-service-mesh)
+- [Misc](#misc)
+  - [Kommander demo](#kommander-demo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -100,8 +105,6 @@ The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
 
 ...
-
-
 ```
 
 
@@ -118,7 +121,7 @@ persisted to local or remote state storage.
     PLAY [Bootstrap Additional Control Plane]
     PLAY [Bootstrap Nodes]
 6. STAGE [Deploying Container Networking] : `ansible`
-7. STAGE [Deploying Enabled Addons]
+7. STAGE [Deploying Enabled Addons]       : `ansible`
 
 
 ### Note03
@@ -202,8 +205,27 @@ runs/
 ```
 
 
-
 ### Note05
+
+Services provided by `Konvoy`
+
+```
+Kubernetes cluster and addons deployed successfully!
+
+Run `konvoy apply kubeconfig` to update kubectl credentials.
+
+Navigate to the URL below to access various services running in the cluster.
+  https://a2aae854f9cca4a23945922be797e718-54138659.us-east-1.elb.amazonaws.com/ops/landing
+And login using the credentials below.
+  Username: pedantic_curran
+  Password: fBr6PBFL2rBiU8sHpMOOtlonyXuO5o3JGnORSYHfsJ6Z30b9ckkGxaMnzunuQA8Q
+
+If the cluster was recently created, the dashboard and services may take a few minutes to be accessible.
+
+```
+
+
+### Note06
 
 ```
 $ konvoy apply kubeconfig
@@ -641,11 +663,81 @@ zk-zookeeper-2   1/1     Running   0          2m32s
 
 
 
+
+
 ## 8. Scale a Konvoy cluster
+
+Nothing fancy, edit the `cluster.yaml` file to change the worker count from `5` to `6`:
+
+```
+...
+  nodePools:
+  - name: worker
+    count: 6
+...
+```
+
+And run `konvoy up --yes` again.
+
+
+
+
+
 ## 9. Konvoy monitoring
 ## 10. Konvoy logging/debugging
+
+
+
 ## 11. Upgrade a Konvoy cluster
+
+### Overview
+
+Everything is in the `cluster.yaml`
+* `kubernetes` version
+* addons version
+* configVersion
+* ....
+
+
+
+
+
 ## 12. Destroy a Konvoy cluster
 
+
+
+
 ## Appendix
+
 ### 1. Setting up an external identity provider
+
+
+
+### 2. Service-mesh
+
+* `Istio` is the leader (Backed by Google)
+* Many others are there
+  - `Maesh` by Continuous (Traefik)
+  - `Consul connect`
+
+
+`Istio` concepts
+* Side-car containers based on `envoy`
+* 1 Controllers and CRDs with `admission controller` that override and inject things in objects definitions
+
+
+
+
+## Misc
+
+### Kommander demo
+
+Kommander:
+* Manage multiple `konvoy` clusters (UI)
+* Automated lifecycle management
+* Distributed configuration management
+    - Roles management
+    - Labels management
+    - Cloud provider management
+
+Like `Rancher`

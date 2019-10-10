@@ -1,0 +1,129 @@
+---
+kind: ClusterProvisioner
+apiVersion: konvoy.mesosphere.io/v1alpha1
+metadata:
+  name: d2iq-workshop
+  creationTimestamp: "2019-09-18T13:01:29.307049375Z"
+spec:
+  provider: aws
+  aws:
+    region: us-east-1
+    availabilityZones:
+    - us-east-1a
+    tags:
+      owner: StudentWorkshop
+      expiration: 8h
+  nodePools:
+  - name: worker
+    count: 5
+    machine:
+      rootVolumeSize: 80
+      rootVolumeType: gp2
+      imagefsVolumeEnabled: true
+      imagefsVolumeSize: 160
+      imagefsVolumeType: gp2
+      type: t3.xlarge
+  - name: control-plane
+    controlPlane: true
+    count: 3
+    machine:
+      rootVolumeSize: 80
+      rootVolumeType: gp2
+      imagefsVolumeEnabled: true
+      imagefsVolumeSize: 160
+      imagefsVolumeType: gp2
+      type: t3.large
+  - name: bastion
+    bastion: true
+    count: 0
+    machine:
+      rootVolumeSize: 10
+      rootVolumeType: gp2
+      type: t3.small
+  sshCredentials:
+    user: centos
+    publicKeyFile: lab-ssh.pub
+    privateKeyFile: lab-ssh.pem
+  version: v1.1.5
+
+---
+kind: ClusterConfiguration
+apiVersion: konvoy.mesosphere.io/v1alpha1
+metadata:
+  name: lab
+  creationTimestamp: "2019-09-18T13:01:25.159038704Z"
+spec:
+  kubernetes:
+    version: 1.15.2
+    controlPlane:
+      controlPlaneEndpointOverride: ""
+      certificate: {}
+      keepalived:
+        enabled: false
+    networking:
+      podSubnet: 192.168.0.0/16
+      serviceSubnet: 10.0.0.0/18
+      httpProxy: ""
+      httpsProxy: ""
+    cloudProvider:
+      provider: aws
+    admissionPlugins:
+      enabled:
+      - NodeRestriction
+      - AlwaysPullImages
+      disabled: []
+    preflightChecks:
+      errorsToIgnore: []
+  containerNetworking:
+    calico:
+      version: v3.8.0
+  containerRuntime:
+    containerd:
+      version: 1.2.6
+      configData:
+        data: ""
+        replace: false
+  packageRepository:
+    defaultRepositoryInstallationDisabled: false
+  nodePools:
+  - name: worker
+  addons:
+    configVersion: stable-1.15.3-1
+    addonsList:
+    - name: awsebscsiprovisioner
+      enabled: true
+    - name: awsebsprovisioner
+      enabled: false
+    - name: dashboard
+      enabled: true
+    - name: dex
+      enabled: true
+    - name: dex-k8s-authenticator
+      enabled: true
+    - name: elasticsearch
+      enabled: true
+    - name: elasticsearchexporter
+      enabled: true
+    - name: fluentbit
+      enabled: true
+    - name: helm
+      enabled: true
+    - name: kibana
+      enabled: true
+    - name: kommander
+      enabled: true
+    - name: localvolumeprovisioner
+      enabled: false
+    - name: opsportal
+      enabled: true
+    - name: prometheus
+      enabled: true
+    - name: prometheusadapter
+      enabled: true
+    - name: traefik
+      enabled: true
+    - name: traefik-forward-auth
+      enabled: true
+    - name: velero
+      enabled: true
+  version: v1.1.5

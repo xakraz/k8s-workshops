@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: echo
+spec:
+  rules:
+  - host: "http-echo-1.com"
+    http:
+      paths:
+      - backend:
+          serviceName: http-echo-1
+          servicePort: 80
+  - host: "http-echo-2.com"
+    http:
+      paths:
+      - backend:
+          serviceName: http-echo-2
+          servicePort: 80

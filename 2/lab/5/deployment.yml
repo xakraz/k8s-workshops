@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebs-dynamic-app
+  labels:
+    app: ebs-dynamic-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebs-dynamic-app
+  template:
+    metadata:
+      labels:
+        app: ebs-dynamic-app
+    spec:
+      containers:
+      - name: ebs-dynamic-app
+        image: centos:7
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo \$(date -u) >> /data/out.txt; sleep 5; done"]
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: dynamic

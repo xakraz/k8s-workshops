@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: awsebscsiprovisioner
+  resources:
+    requests:
+      storage: 1Gi
